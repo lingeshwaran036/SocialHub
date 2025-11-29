@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %} Login {% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <h2 class="text-primary fw-bold fs-2 text-center">
+    <i class="fa-solid fa-users"></i> Welcome to Social<span class="text-warning">Hub</span>
+  </h2>
+
+  <form class="card p-4 shadow-sm border-0" method="POST">
+    {% csrf_token %}
+
+    <!-- Username -->
+    <div class="form-group my-3">
+      <label><i class="fa-solid fa-user me-2"></i> Username</label>
+      <input type="text" name="username" placeholder="Enter your username" 
+             class="form-control" required="true">
+    </div>
+
+    <!-- Password -->
+    <div class="form-group my-3">
+      <label><i class="fa-solid fa-lock me-2"></i> Password</label>
+      <input type="password" name="password" placeholder="Enter your password" 
+             class="form-control" required="true">
+    </div>
+
+    <!-- Login Button -->
+    <button class="btn btn-success form-control mt-3">
+      <i class="fa-solid fa-right-to-bracket me-2"></i> Login
+    </button>
+  </form>
+
+  <!-- Register Link -->
+  <p class="text-center my-3">
+    I don't have an account?
+     <a style="text-decoration: none;" href="{% url 'register' %}">
+       <i class="fa-solid fa-user-plus me-1"></i> Signup
+     </a>
+  </p>
+
+</div>
+{% endblock %}

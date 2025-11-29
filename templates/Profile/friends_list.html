@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Friends of {{ profile_user.username }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h3 class="mb-4"><i class="fa-solid fa-users me-2"></i>Friends of @{{ profile_user.username }}</h3>
+
+    {% if friends %}
+        <div class="list-group">
+            {% for friend in friends %}
+                <div class="list-group-item d-flex align-items-center justify-content-between shadow-sm mb-2 rounded p-3">
+                    
+                    <!-- Friend Info -->
+                    <div class="d-flex align-items-center">
+                        <img src="{{ friend.photo.url }}"
+                             class="rounded-circle me-3 border border-2 border-primary"
+                             style="width:50px;height:50px;object-fit:cover;">
+
+                        <div>
+                            <strong><i class="fa-solid fa-user me-1"></i>@{{ friend.username }}</strong>
+                            {% if friend.bio %}
+                                <p class="mb-0 text-muted"><i class="fa-solid fa-info-circle me-1"></i>{{ friend.bio|truncatewords:10 }}</p>
+                            {% endif %}
+                            <small class="text-muted">
+                                <i class="fa-solid fa-calendar-plus me-1"></i>Joined: {{ friend.created_at|date:"M d, Y" }}
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex align-items-center gap-2">
+
+                        <!-- View Profile -->
+                        <a href="{% url 'view_profile' friend.id %}" class="btn btn-sm btn-outline-primary" title="View Profile">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+
+                        <!-- Send Message -->
+                        {% if current_user and current_user.id != friend.id %}
+                        <a href="{% url 'messages_page' %}?chat={{ friend.id }}" class="btn btn-sm btn-outline-success" title="Send Message">
+                            <i class="fa-regular fa-paper-plane"></i>
+                        </a>
+                        {% endif %}
+
+                        <!-- Friend Status -->
+                        {% if current_user and friends_statuses.friend_ids and friend.id in friends_statuses.friend_ids %}
+                            <span class="btn btn-sm btn-outline-warning" title="Friend">
+                                <i class="fa-solid fa-user-check"></i>
+                            </span>
+                        {% elif current_user and current_user.id != friend.id %}
+                            <a href="{% url 'friend' friend.id %}" class="btn btn-sm btn-outline-success" title="Add Friend">
+                                <i class="fa-solid fa-user-plus"></i>
+                            </a>
+                        {% endif %}
+
+                        <!-- Unfriend -->
+                        {% if current_user and friends_statuses.friend_ids and friend.id in friends_statuses.friend_ids and current_user.id != friend.id %}
+                            <a href="{% url 'unfriend' friend.id %}" class="btn btn-sm btn-outline-danger" title="Unfriend">
+                                <i class="fa-solid fa-user-minus"></i>
+                            </a>
+                        {% endif %}
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted"><i class="fa-regular fa-face-frown me-1"></i>No friends yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

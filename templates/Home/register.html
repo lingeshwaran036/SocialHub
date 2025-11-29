@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %} Register {% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <h2 class="text-primary fw-bold fs-2 text-center">
+    <i class="fa-solid fa-user-plus"></i> Welcome to Social<span class="text-warning">Hub</span>
+  </h2>
+
+  <form class="card p-4 shadow-sm border-0" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Username -->
+    <div class="form-group my-3">
+      <label><i class="fa-solid fa-user me-2"></i> Username</label>
+      <input type="text" name="username" placeholder="Enter your username" 
+             class="form-control" required>
+    </div>
+
+    <!-- Name -->
+    <div class="form-group my-3">
+      <label><i class="fa-solid fa-id-card me-2"></i> Name</label>
+      <input type="text" name="name" placeholder="Enter your name" 
+             class="form-control" required>
+    </div>
+
+    <!-- Photo -->
+    <div class="form-group my-3">
+      <label><i class="fa-solid fa-image me-2"></i> Profile Photo</label>
+      <input type="file" name="photo" class="form-control" accept="image/*" required>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group my-3">
+      <label><i class="fa-solid fa-envelope me-2"></i> Email Address</label>
+      <input type="email" name="email" placeholder="Enter your email address" 
+             class="form-control" required>
+    </div>
+
+    <!-- Password -->
+    <div class="form-group my-3">
+      <label><i class="fa-solid fa-lock me-2"></i> Password</label>
+      <input type="password" name="password" placeholder="Enter your password" 
+             class="form-control" required>
+    </div>
+
+    <!-- Register Button -->
+    <button class="btn btn-success form-control mt-3">
+      <i class="fa-solid fa-user-check me-2"></i> Register Now
+    </button>
+
+  </form>
+
+  <p class="text-center my-3">
+    Already have an account?
+    <a style="text-decoration: none;" href="{% url 'login' %}">
+      <i class="fa-solid fa-right-to-bracket me-1"></i> Login
+    </a>
+  </p>
+
+</div>
+{% endblock %}

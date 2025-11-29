@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% block title %} Home {% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    {% if posts %}
+    {% for post in posts %}
+
+    <div class="card my-4 shadow-sm border-0">
+
+        <!-- Post Header -->
+        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+            <div class="d-flex align-items-center">
+                <img src="{{ post.user.photo.url }}" class="rounded-circle" style="width:45px;height:45px;object-fit:cover;">
+                <div class="ms-3">
+                    <a style="text-decoration: none;" href="{% url 'view_profile' post.user.id %}" class="fw-bold">
+                        <i class="fa-solid fa-user text-primary me-1"></i>@{{ post.user.username }}
+                    </a><br>
+                    <small class="text-muted">
+                        <i class="fa-regular fa-clock me-1"></i>{{ post.created_at|date:"M d, Y" }}
+                    </small>
+                </div>
+            </div>
+
+            <!-- 3-Dot Menu -->
+            <div class="dropdown text-end">
+                <i class="fa-solid fa-ellipsis fs-4 pointer" data-bs-toggle="dropdown"></i>
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+
+                    <li>
+                        <a class="dropdown-item" href="{{ post.image.url }}" download>
+                            <i class="fa-solid fa-download me-2 text-primary"></i> Download Image
+                        </a>
+                    </li>
+
+                    <li>
+                        <button class="dropdown-item" onclick="copyPostLink('{{ request.build_absolute_uri }}post/{{ post.id }}/')">
+                            <i class="fa-solid fa-link me-2 text-secondary"></i> Copy Link
+                        </button>
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item" href="{% url 'save_post' post.id %}">
+                            <i class="fa-regular fa-bookmark me-2 text-warning"></i> Save Post
+                        </a>
+                    </li>
+
+                    <hr class="dropdown-divider">
+
+                    {% if post.user.id == user.id %}
+                    <li>
+                        <a class="dropdown-item text-primary" href="{% url 'edit_post' post.id %}">
+                            <i class="fa-solid fa-pen-to-square me-2"></i> Edit Post
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item text-danger" href="{% url 'delete_post' post.id %}">
+                            <i class="fa-solid fa-trash me-2"></i> Delete Post
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Post Image -->
+        <div class="card-body p-0">
+            <img src="{{ post.image.url }}" class="img-fluid w-100">
+        </div>
+
+        <!-- Like / Comment / Share / Save -->
+        <div class="px-3 pt-3 d-flex justify-content-between align-items-center">
+
+            <div class="d-flex align-items-center gap-3">
+
+                <!-- Like Button -->
+                <a href="{% url 'toggle_like' post.id %}" class="text-dark" style="text-decoration:none;">
+                    {% if user in post.likes.all %}
+                        <i class="fa-solid fa-heart fs-4 text-danger"></i>
+                    {% else %}
+                        <i class="fa-regular fa-heart fs-4"></i>
+                    {% endif %}
+                    <small class="ms-1">{{ post.likes.count }}</small>
+                </a>
+
+                <!-- Comment Button -->
+                <span class="pointer" data-bs-toggle="collapse" data-bs-target="#comments-{{ post.id }}">
+                    <i class="fa-regular fa-comment fs-4"></i>
+                    <small class="ms-1">{{ post.comments.count }}</small>
+                </span>
+
+                <!-- Share Icon -->
+                <span class="pointer" onclick="copyPostLink('{{ request.build_absolute_uri }}post/{{ post.id }}/')">
+                    <i class="fa-regular fa-paper-plane fs-4"></i>
+                </span>
+            </div>
+
+            <!-- Save Icon -->
+            <a href="{% url 'save_post' post.id %}" class="text-dark">
+                {% if post in user.saved_posts.all %}
+                <i class="fa-solid fa-bookmark fs-4"></i>
+                {% else %}
+                <i class="fa-regular fa-bookmark fs-4"></i>
+                {% endif %}
+            </a>
+        </div>
+
+        <!-- Post Description -->
+        <div class="card-footer bg-white border-0">
+            <p class="mb-0">
+                <strong>
+                    <i class="fa-solid fa-user text-primary me-1"></i>@{{ post.user.username }}
+                </strong> 
+                {{ post.description }}
+            </p>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="collapse" id="comments-{{ post.id }}">
+            <div class="p-3">
+
+                {% for comment in post.comments.all %}
+                <div class="mb-2">
+                    <strong><i class="fa-solid fa-user me-1 text-primary"></i>@{{ comment.user.username }}</strong> 
+                    {{ comment.text }}
+
+                    {% if comment.user.id == user.id %}
+                    <a href="{% url 'delete_comment' comment.id %}">
+                        <i class="fa-solid fa-trash text-danger"></i>
+                    </a>
+                    {% endif %}
+
+                    <small class="text-muted d-block">
+                        <i class="fa-regular fa-clock me-1"></i>{{ comment.created_at|timesince }} ago
+                    </small>
+                </div>
+                {% empty %}
+                <p class="text-muted">No comments yet.</p>
+                {% endfor %}
+
+                <!-- Add Comment -->
+                <form method="POST" action="{% url 'add_comment' post.id %}">
+                    {% csrf_token %}
+                    <div class="input-group mt-3">
+                        <input type="text" name="text" class="form-control" placeholder="Add a comment...">
+                        <button class="btn btn-primary">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+    {% endfor %}
+    {% else %}
+    <p class="text-center text-muted">No posts are available right now.</p>
+    {% endif %}
+</div>
+
+<script>
+function copyPostLink(url){
+    navigator.clipboard.writeText(url);
+    alert("Post link copied!");
+}
+</script>
+{% endblock %}

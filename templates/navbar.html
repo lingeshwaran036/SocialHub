@@ -1,0 +1,103 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand text-primary fw-bold fs-2" href="{% url 'home' %}">
+      <i class="fa-solid fa-users-between-lines"></i>
+      Social<span class="text-warning">Hub</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <div class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        {% if request.session.user_id %}
+        
+        <a class="nav-link" href="{% url 'home' %}">
+          <i class="fa-solid fa-house me-1"></i> Home
+        </a>
+
+        <a class="nav-link" href="{% url 'create_post' %}">
+          <i class="fa-solid fa-square-plus me-1"></i> Create Post
+        </a>
+
+        <a class="nav-link" href="{% url 'messages_page' %}">
+          <i class="fa-solid fa-message me-1"></i> Messages
+        </a>
+        
+        <a class="nav-link" href="{% url 'saved_posts' %}">
+          <i class="fa-solid fa-bookmark me-1"></i> Saved Posts
+        </a>
+
+        <!-- 🔔 Notification Icon -->
+        <a class="nav-link position-relative" href="{% url 'notifications' %}">
+          <i class="fa-regular fa-bell me-1 fs-5"></i> Notifications
+          
+          {% if unread_count > 0 %}
+          <span class="badge bg-danger">{{ notification_count }}</span>
+          {% endif %}
+        </a>
+
+        <!-- Quick Access -->
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="fa-solid fa-bars me-1"></i> Quick Access
+          </a>
+
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" href="{% url 'profile' %}">
+                <i class="fa-solid fa-user me-2"></i> Profile
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{% url 'logout' %}">
+                <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {% else %}
+
+        <a class="nav-link" href="{% url 'home' %}">
+          <i class="fa-solid fa-house me-1"></i> Home
+        </a>
+
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="fa-solid fa-bars me-1"></i> Quick Access
+          </a>
+
+          <ul class="dropdown-menu">
+            <li>
+              <a class="dropdown-item" href="{% url 'register' %}">
+                <i class="fa-solid fa-user-plus me-2"></i> Get Started
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{% url 'login' %}">
+                <i class="fa-solid fa-right-to-bracket me-2"></i> Login
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {% endif %}
+      </div>
+
+      <!-- Search Bar -->
+      <form class="d-flex" method="GET" role="search" action="{% url 'search_user' %}">
+        <input name="q" class="form-control me-2" type="search" placeholder="Search users..." 
+               aria-label="Search" value="{{ request.GET.q|default:'' }}">
+        <button class="btn btn-outline-success" type="submit">
+          <i class="fa-solid fa-magnifying-glass me-1"></i> Search
+        </button>
+      </form>
+
+    </div>
+  </div>
+</nav>

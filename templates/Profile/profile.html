@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+
+    <!-- PROFILE HEADER -->
+    <div class="d-flex align-items-center mb-4">
+        <img src="{{ user.photo.url }}" class="rounded-circle shadow-sm"
+             style="width:100px;height:100px;object-fit:cover;">
+
+        <div class="ms-3">
+            <h3 class="mb-1">@{{ user.username }} <i class="fa-solid fa-circle-check text-primary ms-1" title="Verified"></i></h3>
+            <p class="mb-1 text-muted"><i class="fa-regular fa-user me-1"></i>{{ user.bio|default:"No bio yet." }}</p>
+
+            <!-- FRIENDS COUNT + VIEW LINK -->
+            <p class="mb-1">
+                <a href="{% url 'view_friends' user.id %}" class="fw-semibold text-decoration-none">
+                    <i class="fa-solid fa-users me-1"></i>{{ user.friends.count }} Friends
+                </a>
+            </p>
+        </div>
+    </div>
+     
+    <a class="btn btn-primary form-control" href="{% url 'edit_profile' %}">
+        <i class="fa-solid fa-user-pen me-1"></i> Edit Profile
+    </a>
+
+    <hr>
+    <!-- POSTS SECTION -->
+    <h5 class="mb-3"><i class="fa-solid fa-photo-film me-2"></i>My Posts</h5>
+
+    {% if posts %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+
+        {% for post in posts %}
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 position-relative">
+
+                    <!-- POST IMAGE -->
+                    <img src="{{ post.image.url }}" class="card-img-top" style="object-fit:cover; height:220px;">
+
+                    <!-- 3-DOT MENU -->
+                    <div class="dropdown position-absolute top-0 end-0 m-2">
+                        <i class="fa-solid fa-ellipsis fs-5 text-dark pointer"
+                           id="postMenu{{ post.id }}" data-bs-toggle="dropdown"
+                           aria-expanded="false"></i>
+
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="postMenu{{ post.id }}">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'edit_post' post.id %}">
+                                    <i class="fa-solid fa-pen-to-square me-2"></i>Edit
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="{% url 'delete_post' post.id %}">
+                                    <i class="fa-solid fa-trash me-2"></i>Delete
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'view_post' post.id %}">
+                                    <i class="fa-solid fa-eye me-2"></i>View Post
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- DESCRIPTION -->
+                    <div class="card-body">
+                        <p class="mb-2">{{ post.description|truncatewords:15 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <!-- Likes -->
+                            <a href="{% url 'toggle_like' post.id %}" class="text-decoration-none">
+                                {% if user in post.likes.all %}
+                                    <i class="fa-solid fa-heart text-danger me-1"></i>{{ post.likes.count }}
+                                {% else %}
+                                    <i class="fa-regular fa-heart me-1"></i>{{ post.likes.count }}
+                                {% endif %}
+                            </a>
+
+                            <!-- Comments -->
+                            <span>
+                                <i class="fa-regular fa-comment me-1"></i>{{ post.comments.count }}
+                            </span>
+
+                            <!-- Save Post -->
+                            <a href="{% url 'save_post' post.id %}" class="text-decoration-none">
+                                <i class="fa-regular fa-bookmark"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        {% endfor %}
+
+        </div>
+    {% else %}
+        <p class="text-muted"><i class="fa-regular fa-face-smile-beam me-1"></i>You haven't posted anything yet.</p>
+    {% endif %}
+
+</div>
+{% endblock %}
